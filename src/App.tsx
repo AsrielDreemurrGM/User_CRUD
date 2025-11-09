@@ -1,5 +1,6 @@
 import Footer from './components/Footer/Footer';
 import Header from './components/Header/Header';
+import RegisterForm from './components/RegisterForm/RegisterForm';
 import GlobalStyle from './styles/main';
 
 function App() {
@@ -7,6 +8,7 @@ function App() {
     <>
       <GlobalStyle />
       <Header />
+      <RegisterForm />
       <Footer />
     </>
   );
