@@ -1,5 +1,11 @@
 import { createGlobalStyle } from 'styled-components';
 
+export const Breakpoints = {
+  mobile: '480px',
+  tablet: '768px',
+  desktop: '1024px'
+};
+
 export const GlobalStyle = createGlobalStyle`
 * {
     margin: 0;
@@ -9,7 +15,12 @@ export const GlobalStyle = createGlobalStyle`
 }
 
 body {
-  background-color: #999999;
+  background-color: gray;
+}
+
+.mainContainer {
+  max-width: 1200px;
+  margin: 0 auto;
 }
 `;
 
