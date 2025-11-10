@@ -1,8 +1,9 @@
 import { HeaderContainer, NavList, ToggleNav } from './styles';
+import { Breakpoints } from '../../styles/main';
+import { NavLink } from 'react-router-dom';
 
 import TitleImage from '../../assets/images/Title.png';
 import TitleImageSmall from '../../assets/images/TitleSmall.png';
-import { Breakpoints } from '../../styles/main';
 
 function Header() {
   function toggleNav() {
@@ -33,8 +34,23 @@ function Header() {
           <img src={TitleImage} alt="Sistema De Gerenciamento De Usuários" />
         </picture>
         <NavList>
-          <li>Cadastrar Usuário</li>
-          <li>Ver Lista De Usuários</li>
+          <li>
+            <NavLink
+              to="/"
+              end
+              className={({ isActive }) => (isActive ? 'highlighted' : '')}
+            >
+              Cadastrar Usuário
+            </NavLink>
+          </li>
+          <li>
+            <NavLink
+              to="/AllUsersList"
+              className={({ isActive }) => (isActive ? 'highlighted' : '')}
+            >
+              Ver Lista De Usuários
+            </NavLink>
+          </li>
         </NavList>
         <ToggleNav onClick={toggleNav}>
           <span>↑</span>

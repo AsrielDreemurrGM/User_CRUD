@@ -48,6 +48,16 @@ export const NavList = styled.ul`
   li {
     width: 100%;
     max-width: 200px;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  a {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
     padding: 10px 16px;
     background-color: #fff;
     border-radius: 8px;
@@ -58,13 +68,20 @@ export const NavList = styled.ul`
     text-transform: capitalize;
     letter-spacing: 0.5px;
     transition: all 0.1s ease;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
     white-space: nowrap;
+    text-decoration: none;
 
     &:hover {
       background-color: #e0e0e0;
+    }
+
+    &.highlighted {
+      background-color: black;
+      color: white;
+
+      &:hover {
+        background-color: black;
+      }
     }
   }
 

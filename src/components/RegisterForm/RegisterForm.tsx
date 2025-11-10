@@ -26,7 +26,7 @@ function RegisterForm() {
           id="password"
           placeholder="Digite a senha do usuário"
         />
-        <RegisterButton type="submit">Cadastrar</RegisterButton>
+        <RegisterButton type="button">Cadastrar</RegisterButton>
       </Form>
     </FormContainer>
   );

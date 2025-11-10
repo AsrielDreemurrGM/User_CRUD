@@ -12,6 +12,7 @@ export const GlobalStyle = createGlobalStyle`
     padding: 0;
     box-sizing: border-box;
     font-family: 'Arial', sans-serif;
+    text-decoration: none;
 }
 
 body {
