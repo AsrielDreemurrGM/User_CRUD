@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   ListContainer,
   UserCard,
@@ -31,9 +32,20 @@ function UsersList() {
   const [visiblePasswords, setVisiblePasswords] = useState<
     Record<number, boolean>
   >({});
+  const navigate = useNavigate();
 
   function togglePasswordVisibility(id: number) {
     setVisiblePasswords((prev) => ({ ...prev, [id]: !prev[id] }));
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  function handleEdit(user: any) {
+    // I'll create a proper type when the backend is ready
+    navigate(`/EditUser/${user.id}`, { state: user });
+  }
+
+  function handleDelete(userId: number) {
+    console.log(`Deleted user with ID: ${userId}`);
   }
 
   return (
@@ -79,8 +91,16 @@ function UsersList() {
               </InfoColumn>
 
               <ButtonColumn>
-                <Button buttonText="Editar" variant="edit" />
-                <Button buttonText="Excluir" variant="delete" />
+                <Button
+                  buttonText="Editar"
+                  variant="edit"
+                  onClick={() => handleEdit(user)}
+                />
+                <Button
+                  buttonText="Excluir"
+                  variant="delete"
+                  onClick={() => handleDelete(user.id)}
+                />
               </ButtonColumn>
             </UserCard>
           );
