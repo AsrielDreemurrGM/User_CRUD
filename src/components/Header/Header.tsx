@@ -1,9 +1,9 @@
 import { HeaderContainer, NavList, ToggleNav } from './styles';
 import { Breakpoints } from '../../styles/main';
-import { NavLink } from 'react-router-dom';
 
 import TitleImage from '../../assets/images/Title.png';
 import TitleImageSmall from '../../assets/images/TitleSmall.png';
+import NavLinkButton from '../NavLinkButton/NavLinkButton';
 
 function Header() {
   function toggleNav() {
@@ -24,39 +24,31 @@ function Header() {
   }
 
   return (
-    <>
-      <HeaderContainer>
-        <picture>
-          <source
-            srcSet={TitleImageSmall}
-            media={`(max-width: ${Breakpoints.mobile})`}
+    <HeaderContainer>
+      <picture>
+        <source
+          srcSet={TitleImageSmall}
+          media={`(max-width: ${Breakpoints.mobile})`}
+        />
+        <img src={TitleImage} alt="Sistema De Gerenciamento De Usuários" />
+      </picture>
+
+      <NavList>
+        <li>
+          <NavLinkButton to="/" buttonText="Cadastrar Usuário" end />
+        </li>
+        <li>
+          <NavLinkButton
+            to="/AllUsersList"
+            buttonText="Ver Lista De Usuários"
           />
-          <img src={TitleImage} alt="Sistema De Gerenciamento De Usuários" />
-        </picture>
-        <NavList>
-          <li>
-            <NavLink
-              to="/"
-              end
-              className={({ isActive }) => (isActive ? 'highlighted' : '')}
-            >
-              Cadastrar Usuário
-            </NavLink>
-          </li>
-          <li>
-            <NavLink
-              to="/AllUsersList"
-              className={({ isActive }) => (isActive ? 'highlighted' : '')}
-            >
-              Ver Lista De Usuários
-            </NavLink>
-          </li>
-        </NavList>
-        <ToggleNav onClick={toggleNav}>
-          <span>↑</span>
-        </ToggleNav>
-      </HeaderContainer>
-    </>
+        </li>
+      </NavList>
+
+      <ToggleNav onClick={toggleNav}>
+        <span>↑</span>
+      </ToggleNav>
+    </HeaderContainer>
   );
 }
 

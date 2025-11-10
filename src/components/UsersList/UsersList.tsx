@@ -4,13 +4,13 @@ import {
   UserCard,
   InfoColumn,
   ButtonColumn,
-  ActionButton,
   ReadOnlyInput,
   InputGroup,
   Label,
-  EmptyStateContainer,
-  StyledNavLink
+  EmptyStateContainer
 } from './styles';
+import Button from '../Button/Button';
+import NavLinkButton from '../NavLinkButton/NavLinkButton';
 
 function UsersList() {
   const users = [
@@ -79,12 +79,8 @@ function UsersList() {
               </InfoColumn>
 
               <ButtonColumn>
-                <ActionButton type="button" $variant="edit">
-                  Editar
-                </ActionButton>
-                <ActionButton type="button" $variant="delete">
-                  Excluir
-                </ActionButton>
+                <Button buttonText="Editar" variant="edit" />
+                <Button buttonText="Excluir" variant="delete" />
               </ButtonColumn>
             </UserCard>
           );
@@ -92,7 +88,7 @@ function UsersList() {
       ) : (
         <EmptyStateContainer>
           <p>Nenhum usuário cadastrado.</p>
-          <StyledNavLink to="/">Cadastrar Novo Usuário</StyledNavLink>
+          <NavLinkButton to="/" buttonText="Cadastrar Novo Usuário" />
         </EmptyStateContainer>
       )}
     </ListContainer>
