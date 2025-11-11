@@ -3,6 +3,7 @@ import { Breakpoints } from '../../styles/main';
 
 import TitleImage from '../../assets/images/Title.png';
 import TitleImageSmall from '../../assets/images/TitleSmall.png';
+
 import NavLinkButton from '../NavLinkButton/NavLinkButton';
 
 function Header() {

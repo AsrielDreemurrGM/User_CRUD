@@ -1,6 +1,9 @@
+import { useNavigate } from 'react-router-dom';
+
 import { Formik } from 'formik';
 import * as Yup from 'yup';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
+
 import {
   ErrorMsg,
   FormContainer,
@@ -9,7 +12,9 @@ import {
   Label,
   RegisterButton
 } from './styles';
-import { useNavigate } from 'react-router-dom';
+
+import type { RegisterFormValues } from '../../types/Forms';
+import type { BackendError } from '../../types/BackendError';
 
 const RegisterSchema = Yup.object().shape({
   nome: Yup.string().required('Nome obrigatório'),
@@ -22,15 +27,12 @@ const RegisterSchema = Yup.object().shape({
 function RegisterForm() {
   const navigate = useNavigate();
 
-  const handleSubmit = async (values: {
-    nome: string;
-    email: string;
-    senha: string;
-  }) => {
+  const handleSubmit = async (values: RegisterFormValues) => {
     try {
       await axios.post('http://localhost:8080/api/users', values);
       navigate('/AllUsersList');
-    } catch (error: any) {
+    } catch (err) {
+      const error = err as AxiosError<BackendError>;
       alert(error.response?.data?.message || 'Erro ao cadastrar usuário');
       console.error(error);
     }

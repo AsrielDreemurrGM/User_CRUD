@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+
+import axios from 'axios';
+
 import {
   ListContainer,
   UserCard,
@@ -11,6 +13,7 @@ import {
   ReadOnlyInput,
   EmptyStateContainer
 } from './styles';
+
 import Button from '../Button/Button';
 import NavLinkButton from '../NavLinkButton/NavLinkButton';
 

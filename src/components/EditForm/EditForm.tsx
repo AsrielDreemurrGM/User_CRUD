@@ -1,11 +1,17 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+
 import { Formik } from 'formik';
 import * as Yup from 'yup';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
+
 import { FormContainer, Input, Label, ErrorMsg } from '../RegisterForm/styles';
 import Button from '../Button/Button';
 import { ButtonGroup, Formulary } from './styles';
+
+import type { EditFormValues } from '../../types/Forms';
+import type { UpdateUserPayload } from '../../types/UserPayloads';
+import type { BackendError } from '../../types/BackendError';
 
 const EditSchema = Yup.object().shape({
   nome: Yup.string().required('Nome obrigatório'),
@@ -16,7 +22,7 @@ const EditSchema = Yup.object().shape({
 function EditForm() {
   const { userId } = useParams();
   const navigate = useNavigate();
-  const [initialValues, setInitialValues] = useState({
+  const [initialValues, setInitialValues] = useState<EditFormValues>({
     nome: '',
     email: '',
     senha: ''
@@ -26,31 +32,35 @@ function EditForm() {
     const fetchUser = async () => {
       try {
         const token = localStorage.getItem('token');
-        const response = await axios.get(
+        const response = await axios.get<UpdateUserPayload>(
           `http://localhost:8080/api/users/${userId}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
+
         setInitialValues({
           nome: response.data.nome,
           email: response.data.email,
           senha: ''
         });
-      } catch (error) {
-        alert('Erro ao buscar usuário: ' + error);
+      } catch (err) {
+        const error = err as AxiosError<BackendError>;
+        alert(
+          'Erro ao buscar usuário: ' +
+            (error.response?.data?.message || error.message)
+        );
       }
     };
     fetchUser();
   }, [userId]);
 
-  const handleSubmit = async (values: {
-    nome: string;
-    email: string;
-    senha?: string;
-  }) => {
+  const handleSubmit = async (values: EditFormValues) => {
     try {
       const token = localStorage.getItem('token');
 
-      const payload: any = { nome: values.nome, email: values.email };
+      const payload: UpdateUserPayload = {
+        nome: values.nome,
+        email: values.email
+      };
       if (values.senha && values.senha.trim() !== '') {
         payload.senha = values.senha;
       }
@@ -60,8 +70,12 @@ function EditForm() {
       });
 
       navigate('/AllUsersList');
-    } catch (error) {
-      alert('Erro ao atualizar usuário: ' + error);
+    } catch (err) {
+      const error = err as AxiosError<BackendError>;
+      alert(
+        'Erro ao atualizar usuário: ' +
+          (error.response?.data?.message || error.message)
+      );
     }
   };
 
