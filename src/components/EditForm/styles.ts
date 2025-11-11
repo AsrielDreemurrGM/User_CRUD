@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { Breakpoints } from '../../styles/main';
+import { Field, Form } from 'formik';
 
 export const FormContainer = styled.div`
   background-color: #e0e0e0;
@@ -16,7 +17,7 @@ export const FormContainer = styled.div`
   }
 `;
 
-export const Form = styled.form`
+export const Formulary = styled(Form)`
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -30,7 +31,7 @@ export const Label = styled.label`
   text-align: left;
 `;
 
-export const Input = styled.input`
+export const Input = styled(Field)`
   padding: 8px;
   margin-bottom: 4px;
   border: 1px solid lightgray;

@@ -1,88 +1,109 @@
-import { useState, useEffect } from 'react';
-import { useNavigate, useLocation, useParams } from 'react-router-dom';
-import { Form, FormContainer, Input, Label } from '../RegisterForm/styles';
+import { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { Formik } from 'formik';
+import * as Yup from 'yup';
+import axios from 'axios';
+import { FormContainer, Input, Label, ErrorMsg } from '../RegisterForm/styles';
 import Button from '../Button/Button';
-import { ButtonGroup } from './styles';
+import { ButtonGroup, Formulary } from './styles';
+
+const EditSchema = Yup.object().shape({
+  nome: Yup.string().required('Nome obrigatório'),
+  email: Yup.string().email('E-mail inválido').required('E-mail obrigatório'),
+  senha: Yup.string().min(6, 'Senha deve ter ao menos 6 caracteres')
+});
 
 function EditForm() {
-  const navigate = useNavigate();
-  const location = useLocation();
   const { userId } = useParams();
-
-  const userData = location.state || null;
-
-  const [formData, setFormData] = useState({
-    name: '',
+  const navigate = useNavigate();
+  const [initialValues, setInitialValues] = useState({
+    nome: '',
     email: '',
-    password: ''
+    senha: ''
   });
 
   useEffect(() => {
-    if (userData) {
-      setFormData({
-        name: userData.name,
-        email: userData.email,
-        password: userData.password
+    const fetchUser = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await axios.get(
+          `http://localhost:8080/api/users/${userId}`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        setInitialValues({
+          nome: response.data.nome,
+          email: response.data.email,
+          senha: ''
+        });
+      } catch (error) {
+        alert('Erro ao buscar usuário: ' + error);
+      }
+    };
+    fetchUser();
+  }, [userId]);
+
+  const handleSubmit = async (values: {
+    nome: string;
+    email: string;
+    senha?: string;
+  }) => {
+    try {
+      const token = localStorage.getItem('token');
+
+      const payload: any = { nome: values.nome, email: values.email };
+      if (values.senha && values.senha.trim() !== '') {
+        payload.senha = values.senha;
+      }
+
+      await axios.put(`http://localhost:8080/api/users/${userId}`, payload, {
+        headers: { Authorization: `Bearer ${token}` }
       });
-    } else {
-      console.log('Fetching user from API by ID:', userId);
+
+      navigate('/AllUsersList');
+    } catch (error) {
+      alert('Erro ao atualizar usuário: ' + error);
     }
-  }, [userData, userId]);
-
-  function handleCancel() {
-    navigate('/AllUsersList');
-  }
-
-  function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  }
-
-  function handleSave(e: React.FormEvent) {
-    e.preventDefault();
-    console.log('User updated:', formData);
-  }
+  };
 
   return (
     <FormContainer className="mainContainer">
       <h1>Editar Usuário</h1>
-      <Form onSubmit={handleSave}>
-        <Label htmlFor="name">Nome: </Label>
-        <Input
-          type="text"
-          name="name"
-          id="name"
-          value={formData.name}
-          onChange={handleChange}
-        />
+      <Formik
+        enableReinitialize
+        initialValues={initialValues}
+        validationSchema={EditSchema}
+        onSubmit={handleSubmit}
+      >
+        {() => (
+          <Formulary>
+            <Label htmlFor="nome">Nome:</Label>
+            <Input as={Input} name="nome" />
+            <ErrorMsg name="nome" component="div" />
 
-        <Label htmlFor="email">E-mail: </Label>
-        <Input
-          type="text"
-          name="email"
-          id="email"
-          value={formData.email}
-          onChange={handleChange}
-        />
+            <Label htmlFor="email">E-mail:</Label>
+            <Input as={Input} name="email" />
+            <ErrorMsg name="email" component="div" />
 
-        <Label htmlFor="password">Senha: </Label>
-        <Input
-          type="password"
-          name="password"
-          id="password"
-          value={formData.password}
-          onChange={handleChange}
-        />
+            <Label htmlFor="senha">Senha (opcional):</Label>
+            <Input
+              as={Input}
+              type="password"
+              name="senha"
+              placeholder="Deixe vazio para não alterar"
+            />
+            <ErrorMsg name="senha" component="div" />
 
-        <ButtonGroup>
-          <Button buttonText="Salvar" variant="save" type="submit" />
-          <Button
-            buttonText="Cancelar"
-            variant="cancel"
-            onClick={handleCancel}
-          />
-        </ButtonGroup>
-      </Form>
+            <ButtonGroup>
+              <Button type="submit" buttonText="Salvar" variant="save" />
+              <Button
+                buttonText="Cancelar"
+                variant="cancel"
+                onClick={() => navigate('/AllUsersList')}
+              />
+            </ButtonGroup>
+          </Formulary>
+        )}
+      </Formik>
     </FormContainer>
   );
 }

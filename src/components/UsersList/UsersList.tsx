@@ -1,95 +1,88 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import {
   ListContainer,
   UserCard,
   InfoColumn,
   ButtonColumn,
-  ReadOnlyInput,
   InputGroup,
   Label,
+  ReadOnlyInput,
   EmptyStateContainer
 } from './styles';
 import Button from '../Button/Button';
 import NavLinkButton from '../NavLinkButton/NavLinkButton';
 
-function UsersList() {
-  const users = [
-    {
-      id: 1,
-      name: 'Eduardo Augusto',
-      email: 'eduardo@example.com',
-      password: 'senha123'
-    },
-    {
-      id: 2,
-      name: 'Maria Souza',
-      email: 'maria@example.com',
-      password: 'segredo456'
-    }
-  ];
+interface User {
+  id: number;
+  nome: string;
+  email: string;
+}
 
-  const [visiblePasswords, setVisiblePasswords] = useState<
-    Record<number, boolean>
-  >({});
+function UsersList() {
+  const [users, setUsers] = useState<User[]>([]);
   const navigate = useNavigate();
 
-  function togglePasswordVisibility(id: number) {
-    setVisiblePasswords((prev) => ({ ...prev, [id]: !prev[id] }));
-  }
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await axios.get('http://localhost:8080/api/users', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        setUsers(response.data);
+      } catch (error) {
+        alert('Erro ao buscar usuários: ' + error);
+      }
+    };
+    fetchUsers();
+  }, []);
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  function handleEdit(user: any) {
-    // I'll create a proper type when the backend is ready
+  const handleEdit = (user: User) =>
     navigate(`/EditUser/${user.id}`, { state: user });
-  }
 
-  function handleDelete(userId: number) {
-    console.log(`Deleted user with ID: ${userId}`);
-  }
+  const handleDelete = async (id: number) => {
+    try {
+      const token = localStorage.getItem('token');
+      await axios.delete(`http://localhost:8080/api/users/${id}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setUsers((prev) => prev.filter((u) => u.id !== id));
+    } catch (error) {
+      alert('Erro ao deletar usuário: ' + error);
+    }
+  };
 
   return (
     <ListContainer className="mainContainer">
       <h1>Lista De Usuários</h1>
-
-      {users.length > 0 ? (
+      {users.length ? (
         users.map((user) => {
-          const isVisible = visiblePasswords[user.id];
+          const starsCount = Math.floor(Math.random() * (20 - 6 + 1)) + 6;
+          const maskedPassword = '*'.repeat(starsCount);
+
           return (
             <UserCard key={user.id}>
               <InfoColumn>
                 <InputGroup>
-                  <Label htmlFor={`name-${user.id}`}>Nome:</Label>
-                  <ReadOnlyInput
-                    id={`name-${user.id}`}
-                    type="text"
-                    value={user.name}
-                    readOnly
-                  />
+                  <Label>Nome:</Label>
+                  <ReadOnlyInput type="text" value={user.nome} readOnly />
                 </InputGroup>
-
                 <InputGroup>
-                  <Label htmlFor={`email-${user.id}`}>E-mail:</Label>
-                  <ReadOnlyInput
-                    id={`email-${user.id}`}
-                    type="text"
-                    value={user.email}
-                    readOnly
-                  />
+                  <Label>E-mail:</Label>
+                  <ReadOnlyInput type="text" value={user.email} readOnly />
                 </InputGroup>
-
                 <InputGroup>
-                  <Label htmlFor={`password-${user.id}`}>Senha:</Label>
+                  <Label>Senha:</Label>
                   <ReadOnlyInput
-                    id={`password-${user.id}`}
-                    type={isVisible ? 'text' : 'password'}
-                    value={user.password}
+                    type="password"
+                    value={maskedPassword}
                     readOnly
-                    onClick={() => togglePasswordVisibility(user.id)}
+                    disabled
                   />
                 </InputGroup>
               </InfoColumn>
-
               <ButtonColumn>
                 <Button
                   buttonText="Editar"
